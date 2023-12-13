@@ -2,6 +2,10 @@ import socket
 import threading
 import tkinter as tk
 from tkinter import scrolledtext
+import pyglet
+
+pyglet.font.add_file('./Inter-Regular.ttf')
+icon_path = './Animal_Crossing_Leaf.svg.png'
 
 class ChatServerGUI:
     def __init__(self, host, port):
@@ -12,32 +16,39 @@ class ChatServerGUI:
         self.running = True
 
         self.root = tk.Tk()
-        self.root.title("Chat Server")
+        self.root.title("Nook Server")
+        
+        # Customization
+        self.root.iconphoto(True, tk.PhotoImage(file=icon_path))   
 
         # Label to display server address and port
-        label_text = f"Server Address: {self.host}, Port: {self.port}"
-        self.server_label = tk.Label(self.root, text=label_text, font=("Helvetica", 10, "bold"))
-        self.server_label.pack(padx=10, pady=10)
+        label_text = f"Server Address: {self.host}\nPort: {self.port}"
+        self.server_label = tk.Label(self.root, text=label_text, font=("Inter", 11), foreground="#685552")
+        self.server_label.pack(padx=10, pady=17)
 
         # Text area to display chat messages
-        self.chat_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=50, height=20)
+        self.chat_text = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, width=50, height=10, font=("Inter", 9))
         self.chat_text.pack(padx=10, pady=10)
-
+        
         # Entry field for sending messages
-        self.entry_field = tk.Entry(self.root, width=40)
-        self.entry_field.pack(pady=10)
+        self.entry_field = tk.Entry(self.root, width=30, font=("Inter", 9), foreground="black", background="white")
+        self.entry_field.pack(pady=10, side=tk.LEFT, padx=10, ipady=15)
 
-        # Button to send messages
-        send_button = tk.Button(self.root, text="Send", command=self.send_message)
-        send_button.pack()
+        # Button container for Send, Restart, and Close buttons
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(side=tk.BOTTOM, pady=10, padx=10)
 
-        # Button to close the server
-        close_server_button = tk.Button(self.root, text="Close Server", command=self.close_server)
-        close_server_button.pack()
+        # Send button
+        send_button = tk.Button(button_frame, width=19, text="SEND", command=self.send_message, font=("Inter", 9, "bold"), foreground="white", background="#017c74", bd=2, relief="flat", overrelief="groove")
+        send_button.pack(side=tk.TOP)
 
-        # Button to restart the server
-        restart_server_button = tk.Button(self.root, text="Restart Server", command=self.restart_server)
-        restart_server_button.pack()
+        # Restart server button
+        restart_server_button = tk.Button(button_frame, text="Restart Server", command=self.restart_server, font=("Inter", 8), foreground="#786951", background="#f5c24c", relief="flat", overrelief="groove")
+        restart_server_button.pack(side=tk.RIGHT)
+
+        # Close server button
+        close_server_button = tk.Button(button_frame, text="Close Server", command=self.close_server, font=("Inter", 8), foreground="white", background="#ef758a", relief="flat", overrelief="groove")
+        close_server_button.pack(side=tk.LEFT)
 
     def start(self):
         # Bind the socket to a specific address and port
@@ -45,7 +56,8 @@ class ChatServerGUI:
         # Listen for incoming connections
         self.server_socket.listen()
         print(f"Server is listening on {self.host}:{self.port}")
-
+        # self.chat_text.insert(tk.END, f"Server is listening on {self.host}:{self.port}\n", "message")
+    
         # Start a thread to accept connections
         accept_thread = threading.Thread(target=self.accept_connections)
         accept_thread.start()
@@ -56,9 +68,10 @@ class ChatServerGUI:
     def send_message(self):
         message = self.entry_field.get()
         if message:
-            self.chat_text.insert(tk.END, f"Server: {message}\n")
+            self.chat_text.insert(tk.END, f"Server: {message}\n", "message")
             self.entry_field.delete(0, tk.END)
             self.broadcast(f"Server: {message}".encode('utf-8'))
+            
 
     def accept_connections(self):
         # Main server loop
@@ -124,11 +137,11 @@ class ChatServerGUI:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Start the server again
         self.start()
-
-
+    
+    
 if __name__ == "__main__":
     # Server configuration
-    host = socket.gethostbyname(socket.getfqdn())
+    host = socket.gethostbyname(socket.gethostname())
     port = 12345  # Port number
 
     # Create and initialize the ChatServerGUI object
