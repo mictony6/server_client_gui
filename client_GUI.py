@@ -82,16 +82,18 @@ class ChatRoomFrame(tk.Frame):
         super().__init__(master)                                                # Initialize the parent class
         self.chat_app = chat_app                                                # ChatApp object                                        
 
-        # change background color
-        self.config(bg="#F4F0E3")
-
+        # Canvas to display chat title
+        self.canvas = tk.Canvas(self, width=400, height=30)
+        self.canvas.create_text(200, 20, text="NookChat Room", font=("Inter", 15, "bold"), fill="#68b893")
+        self.canvas.pack()
+        
         # text area to display chat messages
-        self.chat_history = scrolledtext.ScrolledText(self, state='disabled', height=15, bg="white",
+        self.chat_history = scrolledtext.ScrolledText(self, state='disabled', height=13, bg="white",
                                                       font=("Inter", 10), borderwidth=0, highlightthickness=0) 
-        self.chat_history.pack(padx=10, pady=10)
+        self.chat_history.pack(padx=10, pady=5)
         
         # input frame
-        input_frame = tk.Frame(self, bg="#F4F0E3")
+        input_frame = tk.Frame(self)
         input_frame.pack(pady=10, padx=10)
         
         self.input_entry = Entry(input_frame, bg="white", font=("Inter", 10))
