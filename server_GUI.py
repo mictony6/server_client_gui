@@ -43,7 +43,7 @@ class ChatServerGUI:
         send_button.pack(side=tk.TOP)
 
         # Restart server button
-        restart_server_button = tk.Button(button_frame, text="Restart Server", command=self.restart_server, font=("Inter", 8), foreground="#786951", background="#f5c24c", relief="flat", overrelief="groove")
+        restart_server_button = tk.Button(button_frame, text="Restart Server", command=self.restart_server, font=("Inter", 8), foreground="#786951", relief="flat", overrelief="groove")
         restart_server_button.pack(side=tk.RIGHT)
 
         # Close server button
