@@ -31,8 +31,11 @@ class ChatClient:
             except:
                 # If an error occurs, close the connection
                 print("Connection closed.")
-                self.client_socket.close() 
+                self.client_socket.close()
+                self.client_socket = None
                 self.running = False
+                chat_room_frame.disable_entry()
+
                 break
 
     def send_message(self, message):
@@ -86,10 +89,10 @@ class ChatRoomFrame(tk.Frame):
         self.canvas = tk.Canvas(self, width=400, height=30)
         self.canvas.create_text(200, 20, text="NookChat Room", font=("Inter", 15, "bold"), fill="#68b893")
         self.canvas.pack()
-        
+
         # text area to display chat messages
         self.chat_history = scrolledtext.ScrolledText(self, state='disabled', height=13, bg="white",
-                                                      font=("Inter", 10), borderwidth=0, highlightthickness=0) 
+                                                      font=("Inter", 10), borderwidth=0, highlightthickness=0)
         self.chat_history.pack(padx=10, pady=5)
         
         # input frame
@@ -122,6 +125,10 @@ class ChatRoomFrame(tk.Frame):
         self.chat_history.config(state='disabled')
         self.chat_history.see(END)
 
+    def disable_entry(self):
+        self.input_entry.config(state='disabled')
+        self.send_button.config(state="disabled")
+
 # Displays the login frame and chat room frame
 class ChatApp(tk.Tk):
     def __init__(self):
@@ -145,7 +152,7 @@ class ChatApp(tk.Tk):
 
     def close(self):                                                            # Close the client and destroy the window
         print("Goodbye")
-        if self.client is not None:
+        if self.client.client_socket is not None:
             self.client.running = False
             self.client.send_message("<left the chat room>")
             self.client.client_socket.close()

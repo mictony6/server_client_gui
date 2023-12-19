@@ -97,6 +97,13 @@ class ChatServerGUI:
                 if self.running:
                     print(f"Error accepting connection: {e}")
 
+        # The server is no longer running, close any remaining client sockets
+        for client in self.clients:
+            client.close()
+
+        # Close the server socket
+        self.server_socket.close()
+
     def handle_client(self, client_socket, client_name):
         while self.running:
             try:
@@ -126,6 +133,8 @@ class ChatServerGUI:
                     self.clients.remove(client)
 
     def close_server(self):
+        message = "<server closed>"
+        self.broadcast(message.encode('utf-8'))
         self.running = False
         self.server_socket.close()
         self.root.destroy()
